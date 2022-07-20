@@ -96,7 +96,15 @@ EOF
 sudo chmod 0644 /lib/systemd/system/vault.service
 # cd /etc/systemd/system/multi-user.target.wants
 # sudo ln -s /etc/systemd/system/vault.service vault.service # TODO check if neccesary, if yes then replace with systemd link or enable cmd.
-sudo systemctl daemon-reload
+systemctl daemon-reload
+
+
+# Enable and start the vault.service
+systemctl enable vault
+systemctl start vault
+
+# export the vault_addr
+export VAULT_ADDR="http://127.0.0.1:8200"
 
 # install vault cli auto-completion
 vault -autocomplete-install
