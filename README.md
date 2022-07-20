@@ -1,23 +1,55 @@
 # terraform-aws-simple-vault-cluster
-Opinionated module to deploy an unhardened Vault development cluster.
+Opinionated module to deploy an unhardened Vault development cluster in AWS.
+The cluster in configured with auto unseal via AWS KMS, this allows for developing without constantly unsealing.
 
-## Roadmap
-- basics:
-  - Documentation exists.
-  - Variables have validation where applicable.
-  - The repository has tags or releases.
-  - Examples are tested in CI.
-  - Examples pass in CI.
-  - Module is published to The Registry.
-- hostnames (on cli)
-- input for node count
+## Prerequirements
+- provide AWS credentials (via AWS CLI or ENV variables)
+- Check the output after running `terraform apply` for further instructions. (Unique per example!)
 
-## bugs
-╷
-│ Error: Provider produced inconsistent final plan
-│ 
-│ When expanding the plan for module.simple-vault-cluster.aws_instance.vault-node[0] to include new values learned so far during apply, provider "registry.terraform.io/hashicorp/aws" produced an invalid new value for .user_data: was
-│ cty.StringVal("bb7b7b9ef340c341e4f80b0a2171fc336f17a63b"), but now cty.StringVal("8b4f8384b43bae62bca7c1fadf846c4b1f68ec9c").
-│ 
-│ This is a bug in the provider, which should be reported in the provider's own issue tracker.
-╵
+## HOWTO:
+1. Git clone the project
+2. Navigate to an example deployment, i.e. `examples/default`
+3. Run `terraform apply`
+4. Check the Terraform output to connect to the Bastion and Vault nodes.
+
+## Auto unseal
+This modules deploys a cluster with auto unseal enabled via AWS KMS.
+It also offers the option to supply your own AWS KMS key OR automatically generate one for you.
+If it configured as an input in the `module "simple-vault-cluser" {}` block then it will be used, else it will be generated automatically.
+> NOTE: 
+> The KMS key has to allready exist before running `terraform apply` to deploy the Vault cluster. 
+> The user supplied KMS key CANNOT be created in the same run this module creates the Vault cluster infrastructure!
+
+## Inputs & Outputs
+
+## Roadmap - TODO
+- Variables
+  - [ ] check vars in example and optionally move them to the cluster module and output them, then reference with module.output-name.
+- [ ] basics:
+  - [x] basic working code
+    - [ ] example "default" --> single node works, 3/5 nodes TODO
+  - [x] Documentation exists.
+  - [ ] Variables have validation where applicable.
+  - [ ] The repository has tags or releases.
+  - [ ] Examples are tested in CI.
+  - [ ] Examples pass in CI.
+  - [ ] Module is published to The Registry.
+- [ ] cloud auto-join
+- [ ] cloud auto-unseal
+  - [x] auto unseal basic implementation
+  - [x] with auto key creation
+  - [x] feature bring your own key.arn.id
+  - [ ] convert to module (or not needed?)
+- [ ] more examples
+  - [ ] dynamoDB + s3 --> compare to NEW default example, refactor after DEFAULT example work with cluster
+- [ ] TLS
+  - [ ] module that spits out .crt .key .ca (see Gists)
+  - [ ] SSL for API on 8200
+  - [ ] SSL for RAFT on 8201
+- [ ] logical hostnames (in CLI prompt) --> bastion works, vault nodes TODO
+- [x] Refactor IAM, instance profile -> roles -> policies -> permissions
+  - [x] move instance profile to cluster module
+  - [x] double check auto-unseal code (awskms resource + roles/policies + user_Data) code is split over module and example
+- [ ] auto unseal transit DEV/inmem cluster (cheaper then AWS KMS also :>)
+- [x] input for node count so it can configured in the module block (1, 3 or 5 nodes only)
+- [ ] skip or auto fix host fingerprint checking
