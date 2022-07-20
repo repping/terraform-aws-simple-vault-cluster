@@ -104,7 +104,8 @@ systemctl enable vault
 systemctl start vault
 
 # export the vault_addr
-export VAULT_ADDR="http://127.0.0.1:8200"
+echo "export VAULT_ADDR=\"http://127.0.0.1:8200\"" >> /root/.profile
+echo "export VAULT_ADDR=\"http://127.0.0.1:8200\"" >> /home/ubuntu/.profile
 
 # install vault cli auto-completion
 vault -autocomplete-install
