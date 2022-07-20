@@ -7,27 +7,27 @@ output "zz_bastion_easy_connect" {
 
 --------
 # AWS KMS key id used for auto unseal:
-${module.simple-vault-cluster.aws_kms_key_id}
+${module.vault.aws_kms_key_id}
 
 # How to connect:
-ssh-add ${module.simple-bastion.ssh_privkey}
-ssh -A ubuntu@${module.simple-bastion.public_ip}
+ssh-add ${module.bastion.ssh_privkey}
+ssh -A ubuntu@${module.bastion.public_ip}
 
 # Optional, ssh to the Vault cluster nodes:
 node 1: 
-ssh ubuntu@${module.simple-vault-cluster.vault-node-0}
+ssh ubuntu@${module.vault.vault-node-0}
 node 2: 
-ssh ubuntu@${try(module.simple-vault-cluster.vault-node-1, "1 node cluster")}
+ssh ubuntu@${try(module.vault.vault-node-1, "1 node cluster")}
 node 3: 
-ssh ubuntu@${try(module.simple-vault-cluster.vault-node-2, "1 node cluster")}
+ssh ubuntu@${try(module.vault.vault-node-2, "1 node cluster")}
 
 # Vault UI address:
 node 1: 
-http://${module.simple-vault-cluster.vault-node-0-gui}:${module.simple-vault-cluster.vault_port}
+http://${module.vault.vault-node-0-gui}:${module.vault.vault_port}
 node 2: 
-http://${module.simple-vault-cluster.vault-node-1-gui}:${module.simple-vault-cluster.vault_port}
+http://${module.vault.vault-node-1-gui}:${module.vault.vault_port}
 node 3: 
-http://${module.simple-vault-cluster.vault-node-2-gui}:${module.simple-vault-cluster.vault_port}
+http://${module.vault.vault-node-2-gui}:${module.vault.vault_port}
 --------
 
 export VAULT_ADDR="http://127.0.0.1:8200"

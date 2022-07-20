@@ -8,7 +8,7 @@ data "aws_ami" "latest_ubuntu" {
   }
 }
 
-module "simple-vpc" {
+module "vpc" {
   source           = "../../../terraform-aws-vpc"
   cidr_block       = "10.0.0.0/16"
   public_subnet    = true
@@ -21,16 +21,16 @@ module "simple-vpc" {
   }
 }
 
-module "simple-bastion" {
+module "bastion" {
   source = "../../../terraform-aws-bastion"
 
   ami              = data.aws_ami.latest_ubuntu.id
   instance_type    = "t2.micro"
   region           = var.region
-  subnet           = module.simple-vpc.vpc_public_subnet
+  subnet           = module.vpc.vpc_public_subnet
   ssh_allowed_from = var.ssh_allowed_from
   ssh_pubkey       = file("test_ssh_key_rsa.pub")
-  vpc              = module.simple-vpc.vpc_id
+  vpc              = module.vpc.vpc_id
 
   tags = {
     owner = "richarde"
@@ -38,7 +38,7 @@ module "simple-bastion" {
   }
 }
 
-module "simple-vault-cluster" {
+module "vault" {
   source = "../../../terraform-aws-vault"
 
   ami                 = data.aws_ami.latest_ubuntu.id
@@ -48,10 +48,10 @@ module "simple-vault-cluster" {
   vault_port          = 8200
   region              = var.region
   installation_method = "binary"
-  subnet              = module.simple-vpc.vpc_public_subnet
+  subnet              = module.vpc.vpc_public_subnet
   ssh_allowed_from    = "10.0.0.0/16"
-  ssh_pubkey          = module.simple-bastion.ssh_pubkey
-  vpc                 = module.simple-vpc.vpc_id
+  ssh_pubkey          = module.bastion.ssh_pubkey
+  vpc                 = module.vpc.vpc_id
 
   tags = {
     owner = "richarde"
