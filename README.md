@@ -1,4 +1,4 @@
-# terraform-aws-simple-vault-cluster
+# terraform-aws-vault
 Opinionated module to deploy an unhardened Vault development cluster in AWS.
 The cluster in configured with auto unseal via AWS KMS, this allows for developing without constantly unsealing.
 

@@ -9,7 +9,7 @@ data "aws_ami" "latest_ubuntu" {
 }
 
 module "simple-vpc" {
-  source           = "../../../terraform-aws-simple-vpc"
+  source           = "../terraform-aws-vpc"
   cidr_block       = "10.0.0.0/16"
   public_subnet    = true
   region           = var.region
@@ -22,7 +22,7 @@ module "simple-vpc" {
 }
 
 module "simple-bastion" {
-  source = "../../../terraform-aws-simple-bastion"
+  source = "../terraform-aws-bastion"
 
   ami              = data.aws_ami.latest_ubuntu.id
   instance_type    = "t2.micro"
@@ -41,17 +41,19 @@ module "simple-bastion" {
 module "simple-vault-cluster" {
   source = "../../../terraform-aws-simple-vault-cluster"
 
-  ami              = data.aws_ami.latest_ubuntu.id
-  instance_type    = "t2.micro"
-  vault_port       = 8200
-  region           = var.region
-  subnet           = module.simple-vpc.vpc_public_subnet
-  ssh_allowed_from = "10.0.0.0/16"
-  ssh_pubkey       = module.simple-bastion.ssh_pubkey
-  vpc              = module.simple-vpc.vpc_id
+  ami                 = data.aws_ami.latest_ubuntu.id
+  aws_kms_key_id      = var.aws_kms_key_id
+  instance_type       = "t3.micro"
+  cluster_size        = 1
+  vault_port          = 8200
+  region              = var.region
+  installation_method = "binary"
+  subnet              = module.simple-vpc.vpc_public_subnet
+  ssh_allowed_from    = "10.0.0.0/16"
+  ssh_pubkey          = module.simple-bastion.ssh_pubkey
+  vpc                 = module.simple-vpc.vpc_id
 
   tags = {
     owner = "richarde"
-    Name  = "vault RE"
   }
 }

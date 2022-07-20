@@ -9,21 +9,52 @@ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://
 # Install Vault
 sudo apt update && sudo apt install -y vault
 
+# Allow Vault to run the melock syscall without sudo/root
+sudo setcap cap_ipc_lock=+ep /usr/local/bin/vault
+
+# Set variables for the user_data provisioning runtime.
+my_hostname="$(curl http://169.254.169.254/latest/meta-data/hostname)"
+my_ipaddress="$(curl http://169.254.169.254/latest/meta-data/local-ipv4)"
+my_instance_id="$(curl http://169.254.169.254/latest/meta-data/instance-id)"
+my_region="$(curl http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d\" -f4)"
+
+
 # Create Vault config
+sudo mkdir /etc/vault.d
 cat << EOF > /etc/vault.d/vault.hcl
 ui = true
-# disable_mlock = true
+disable_mlock = true
+api_addr = "http://$${my_ipaddress}:8200"
+cluster_addr = "http://$${my_ipaddress}:8201"
 
 storage "file" {
-  path = "/opt/vault/data"
+  path = "/opt/vault"
+}
+
+# storage "raft" {
+#   path    = "/opt/vault/data"
+#   node_id = "$${my_instance_id}"
+#   retry_join {
+#     auto_join               = "provider=aws tag_key=Name tag_value=${instance_name} addr_type=private_v4 region=${region}"
+#     auto_join_scheme        = "http"
+#     # leader_ca_cert_file     = "${vault_path}/tls/vault_ca.crt"
+#     # leader_client_cert_file = "${vault_path}/tls/vault.crt"
+#     # leader_client_key_file  = "${vault_path}/tls/vault.pem"
+#   }
+# }
+
+seal "awskms" {
+  region     = "${kms_region}"
+  kms_key_id = "${kms_key_id}"
 }
 
 # HTTPS listener
 listener "tcp" {
-  address       = "0.0.0.0:${port}"
-#   tls_cert_file = "/opt/vault/tls/tls.crt"
-#   tls_key_file  = "/opt/vault/tls/tls.key"
-  tls_disable   = 1
+  address             = "0.0.0.0:${port}"
+  cluster_address     = "0.0.0.0:8201"
+#   tls_cert_file       = "/opt/vault/tls/tls.crt"
+#   tls_key_file        = "/opt/vault/tls/tls.key"
+  tls_disable         = 1
 }
 
 # Enterprise license_path
@@ -36,8 +67,11 @@ systemctl enable --now vault.service
 # Set Vault address in the cli environment
 export VAULT_ADDR='http://127.0.0.1:${port}'
 
-# Initialize Vault
-vault operator init > /home/ubuntu/initialisation.txt
+# Initialize Vault. Exists because else somebody could theoritically init vault via the Web UI, since it's enabled by default.
+# vault operator init > /home/ubuntu/initialisation.txt
 
 # Remove Welcome Message upon logging in via SSH
 sudo touch /home/ubuntu/.hushlogin
+
+# install vault cli auto-completion
+vault -autocomplete-install

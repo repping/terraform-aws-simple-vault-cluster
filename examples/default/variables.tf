@@ -8,7 +8,6 @@ variable "region" {
     error_message = "Region variable not set!"
   }
 }
-
 variable "ssh_allowed_from" {
   description = "CIDR block for SSH access to the bastion."
   type        = string
@@ -18,4 +17,9 @@ variable "ssh_allowed_from" {
     condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(/([0-9]|[12][0-9]|3[0-2]))$", var.ssh_allowed_from))
     error_message = "Invalid cidr_block, pattern should be \"<ip>/<netmask>\". example: \"192.168.0.0/16\" "
   }
+}
+variable "aws_kms_key_id" {
+  description = "key id of the user specified AWS KMS key to be used for auto unsealing"
+  type = string
+  default = ""
 }

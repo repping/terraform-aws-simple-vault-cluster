@@ -19,6 +19,10 @@ output "vault-node-2-gui" {
 output "vault_port" {
   value = var.vault_port
 }
-output "vault_node_user_data" {
-  value = aws_instance.vault-node[0].user_data
+output "aws_kms_key_id" {
+  value = local.aws_kms_key_id
+}
+# IAM role id so that other modules can add to the permissions of the vault nodes.
+output "vault_iam_role_id" {
+  value = aws_iam_role.vault_instance.id
 }

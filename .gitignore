@@ -5,3 +5,4 @@ terraform.lock.hcl
 *_rsa
 *_rsa.pub
 terraform.tfvars
+examples/dynamodb-s3

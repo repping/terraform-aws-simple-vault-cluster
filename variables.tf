@@ -1,3 +1,26 @@
+variable "cluster_name" {
+  description = "Cluster name"
+  default     = "vault_cluster"
+}
+variable "aws_kms_key_id" {
+  description = "Variable to bring your own auto unseal key, when configured TF will not create a KMS key for you."
+  type = string
+  default = ""
+}
+variable "name" {
+  description = "The name of the vault cluster in 3 to 5 characters. Changes in runtime would re-deploy a new cluster, data from the old cluster would be lost."
+  type        = string
+  default     = "unset"
+}
+variable "cluster_size" {
+  description = "Cluster sizing, how many nodes are in the cluster"
+  type        = number
+  default     = 3
+  validation {
+    condition     = contains([1,3,5], var.cluster_size)
+    error_message = "Cluster_size currently only accepts 1, 3 or 5 nodes per cluster."
+  }
+}
 variable "ami" {
   description = "Amazon machine image to use for the Bastion server"
   type        = string
@@ -67,4 +90,23 @@ variable "vpc" {
   description = "VPC to deploy the cluster in in"
   type        = string
   default     = ""
+}
+variable "installation_method" {
+  description = "Installation methode, can be either \"rpm\" or \"binary\""
+  type        = string
+  default     = "rpm"
+
+  validation {
+    condition     = contains(["rpm", "binary"], var.installation_method)
+    error_message = "Not an available installation methode, can be either \"rpm\" or \"binary\". Default: rpm"
+  }
+}
+variable "instance_profile_path" {
+  description = "Path in which to create the IAM instance profile."
+  default     = "/"
+}
+variable "iam_permissions_boundary" {
+  description = "If set, restricts the created IAM role to the given permissions boundary"
+  type        = string
+  default     = null
 }
