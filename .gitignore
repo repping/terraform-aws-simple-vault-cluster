@@ -1,0 +1,7 @@
+.terraform*
+*.backup
+*.tfstate
+terraform.lock.hcl
+*_rsa
+*_rsa.pub
+terraform.tfvars
