@@ -44,10 +44,10 @@ module "vault" {
   ami                 = data.aws_ami.latest_ubuntu.id
   aws_kms_key_id      = var.aws_kms_key_id
   instance_type       = "t3.micro"
-  cluster_size        = 1
+  cluster_size        = 3
   vault_port          = 8200
   region              = var.region
-  installation_method = "binary"
+  installation_method = "rpm"
   subnet              = module.vpc.vpc_public_subnet
   ssh_allowed_from    = "10.0.0.0/16"
   ssh_pubkey          = module.bastion.ssh_pubkey

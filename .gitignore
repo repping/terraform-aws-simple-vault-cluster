@@ -6,3 +6,4 @@ terraform.lock.hcl
 *_rsa.pub
 terraform.tfvars
 examples/dynamodb-s3
+init.md
