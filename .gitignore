@@ -7,3 +7,4 @@ terraform.lock.hcl
 terraform.tfvars
 examples/dynamodb-s3
 init.md
+examples/SUPPORT_CODE/TLS/generate-my-tls.sh
