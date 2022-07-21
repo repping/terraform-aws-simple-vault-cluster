@@ -49,6 +49,17 @@ resource "aws_security_group_rule" "ingress_api" {
   security_group_id = aws_security_group.vault-cluster.id
 }
 
+# Add port 8200/tcp inbound to the security group.
+resource "aws_security_group_rule" "ingress_raft" {
+  type              = "ingress"
+  description       = "allow inbound 8200"
+  from_port         = 8201
+  to_port           = 8201
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.vault-cluster.id
+}
+
 # Add port 22/tcp inbound to the security group.
 resource "aws_security_group_rule" "ingress_ssh" {
   type              = "ingress"

@@ -23,6 +23,12 @@ If it configured as an input in the `module "simple-vault-cluser" {}` block then
 ## Inputs & Outputs
 
 ## Roadmap - TODO
+example/default:
+- self-signed tls for listener + RAFT
+- auto scaling group
+- Domain in place
+- ELB + cert + domain
+
 - Variables
   - [ ] check vars in example and optionally move them to the cluster module and output them, then reference with module.output-name.
 - [ ] basics:
@@ -34,8 +40,8 @@ If it configured as an input in the `module "simple-vault-cluser" {}` block then
   - [ ] Examples are tested in CI.
   - [ ] Examples pass in CI.
   - [ ] Module is published to The Registry.
-- [ ] cloud auto-join
-- [ ] cloud auto-unseal
+- [x] cloud auto-join
+- [x] cloud auto-unseal
   - [x] auto unseal basic implementation
   - [x] with auto key creation
   - [x] feature bring your own key.arn.id

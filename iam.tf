@@ -51,3 +51,22 @@ resource "aws_iam_role_policy" "autounseal" {
   policy = data.aws_iam_policy_document.autounseal.json
   role   = aws_iam_role.vault_instance.id
 }
+
+# Make a policy to allow auto joining.
+data "aws_iam_policy_document" "autojoin" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeInstances",
+      "ec2:DescribeTags"
+    ]
+    resources = ["*"]
+  }
+}
+
+# IAM - auto-unseal - link policy to the default role.
+resource "aws_iam_role_policy" "autojoin" {
+  name   = "${local.cluster_name}-autoujoin"
+  policy = data.aws_iam_policy_document.autojoin.json
+  role   = aws_iam_role.vault_instance.id
+}

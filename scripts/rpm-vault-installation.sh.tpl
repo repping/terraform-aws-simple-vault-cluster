@@ -27,21 +27,21 @@ disable_mlock = true
 api_addr = "http://$${my_ipaddress}:8200"
 cluster_addr = "http://$${my_ipaddress}:8201"
 
-storage "file" {
-  path = "/opt/vault"
-}
-
-# storage "raft" {
-#   path    = "/opt/vault/data"
-#   node_id = "$${my_instance_id}"
-#   retry_join {
-#     auto_join               = "provider=aws tag_key=Name tag_value=${instance_name} addr_type=private_v4 region=${region}"
-#     auto_join_scheme        = "http"
-#     # leader_ca_cert_file     = "${vault_path}/tls/vault_ca.crt"
-#     # leader_client_cert_file = "${vault_path}/tls/vault.crt"
-#     # leader_client_key_file  = "${vault_path}/tls/vault.pem"
-#   }
+# storage "file" {
+#   path = "/opt/vault"
 # }
+
+storage "raft" {
+  path    = "/opt/vault/data"
+  node_id = "$${my_instance_id}"
+  retry_join {
+    auto_join               = "provider=aws tag_key=Name tag_value=${instance_name} addr_type=private_v4 region=${region}"
+    auto_join_scheme        = "http"
+    # leader_ca_cert_file     = "${vault_path}/tls/vault_ca.crt"
+    # leader_client_cert_file = "${vault_path}/tls/vault.crt"
+    # leader_client_key_file  = "${vault_path}/tls/vault.pem"
+  }
+}
 
 seal "awskms" {
   region     = "${kms_region}"
@@ -61,8 +61,6 @@ listener "tcp" {
 #license_path = "/etc/vault.d/vault.hclic"
 EOF
 
-# Start and enable the Vault service
-systemctl enable --now vault.service
 
 # Set Vault address in the cli environment
 export VAULT_ADDR='http://127.0.0.1:${port}'
@@ -70,8 +68,16 @@ export VAULT_ADDR='http://127.0.0.1:${port}'
 # Initialize Vault. Exists because else somebody could theoritically init vault via the Web UI, since it's enabled by default.
 # vault operator init > /home/ubuntu/initialisation.txt
 
-# Remove Welcome Message upon logging in via SSH
-sudo touch /home/ubuntu/.hushlogin
+# Enable and start the vault.service
+systemctl enable vault
+# systemctl start vault
+
+# export the vault_addr
+echo "export VAULT_ADDR=\"http://127.0.0.1:8200\"" >> /root/.profile
+echo "export VAULT_ADDR=\"http://127.0.0.1:8200\"" >> /home/ubuntu/.profile
 
 # install vault cli auto-completion
 vault -autocomplete-install
+
+# Remove Welcome Message upon logging in via SSH
+sudo touch /home/ubuntu/.hushlogin
