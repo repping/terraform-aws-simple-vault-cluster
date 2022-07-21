@@ -13,3 +13,4 @@ examples/SUPPORT_CODE/TLS/generate-my-tls.sh
 *.srl
 *.csr
 *.crt
+openssl.conf
