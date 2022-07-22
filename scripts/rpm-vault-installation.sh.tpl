@@ -69,7 +69,7 @@ O = MyCompany
 OU = MyDivision
 CN = www.company.com
 [dn]
-commonName             = localhost
+commonName = localhost
 [ext]
 keyUsage = keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth
