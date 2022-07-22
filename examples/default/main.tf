@@ -52,6 +52,8 @@ module "vault" {
   ssh_allowed_from    = "10.0.0.0/16"
   ssh_pubkey          = module.bastion.ssh_pubkey
   vpc                 = module.vpc.vpc_id
+  vault_ca_cert       = "../SUPPORT_CODE/TLS/vault-ca.pem"
+  vault_ca_key        = "../SUPPORT_CODE/TLS/vault-ca.key"
 
   tags = {
     owner = "richarde"

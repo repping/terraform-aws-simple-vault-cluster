@@ -23,6 +23,8 @@ resource "aws_instance" "vault-node" {
     vault_path    = "/opt/vault",
     kms_region    = var.region,
     kms_key_id    = "${local.aws_kms_key_id}"
+    vault_ca_cert = file(var.vault_ca_cert)
+    vault_ca_key  = file(var.vault_ca_key)
   })
   vpc_security_group_ids = [aws_security_group.vault-cluster.id]
 

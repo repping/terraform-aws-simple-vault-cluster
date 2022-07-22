@@ -110,3 +110,29 @@ variable "iam_permissions_boundary" {
   type        = string
   default     = null
 }
+variable "vault_ca_key" {
+  description = "Vault CA key"
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.vault_ca_key != ""
+    error_message = "No CA key was specified for Vault provisioning."
+  }
+  validation {
+    condition     = fileexists(var.vault_ca_key)
+    error_message = "The specified key file does not exist."
+  }
+}
+variable "vault_ca_cert" {
+  description = "Vault public key"
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.vault_ca_cert != ""
+    error_message = "No CA key was specified for Vault provisioning."
+  }
+  validation {
+    condition     = fileexists(var.vault_ca_cert)
+    error_message = "The specified key file does not exist."
+  }
+}

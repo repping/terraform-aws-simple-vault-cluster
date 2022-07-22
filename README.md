@@ -24,8 +24,8 @@ If it configured as an input in the `module "simple-vault-cluser" {}` block then
 
 ## Roadmap - TODO
 example/default:
-- self-signed tls for listener + RAFT
 - auto scaling group
+  - raft auto pilot + uitzoeken
 - Domain in place
 - ELB + cert + domain
 
